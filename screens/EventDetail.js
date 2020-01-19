@@ -1,19 +1,41 @@
 import React from 'react';
 import { Content, H1, Card, CardItem, Text, Body, Container } from 'native-base';
 import { Image, Button } from 'react-native';
+import axios from 'axios'
+
+
 export default class EventDetail extends React.Component {
 	static navigationOptions = {
+		title: 'Event Detail',
 		headerStyle: {
 			backgroundColor: '#ff5252'
 		},
 		headerTintColor: '#fff'
 	};
 
+	state = {
+		events: []
+	};
+	componentDidMount() {
+		const { navigation } = this.props
+		const getIdEvent = navigation.getParam('itemId')
+		axios({
+			method: 'GET',
+			url: `http://192.168.1.107:7000/api/v1/event/${getIdEvent}`
+		}).then((responses) => {
+			this.setState({ events: responses.data });
+		});
+	}
+
+
 	render() {
+		const { navigation } = this.props
+
 		return (
 			<Container style={{ backgroundColor: '#fbe9e7' }}>
 				<Content style={{ marginTop: 20 }}>
-					<H1 style={{ color: '#ff5252' }}>Events</H1>
+					{console.log(this.state.events)}
+					<H1 style={{ color: '#ff5252' }}>Detail</H1>
 					<Content>
 						<Card>
 							<CardItem>
@@ -28,11 +50,11 @@ export default class EventDetail extends React.Component {
 											padding: 6
 										}}
 									>
-										<Text style={{ color: '#ff5252' }}>120000</Text>
+										<Text style={{ color: '#ff5252' }}>{this.state.events.price}</Text>
 									</Card>
 									<Image
 										source={{
-											uri: `https://cdn1-production-images-kly.akamaized.net/HVzlC2h8IkU9KlXfBqQL42n2OrE=/640x360/smart/filters:quality(75):strip_icc():format(jpeg)/kly-media-production/medias/1858174/original/068844300_1517557076-Langsing-Tanpa-Diet-ala-Raisa-Andriana-Foto-Deki-Prayoga-Digital-Imaging-Muhammad-Iqbal-Nurfajri-Bintang-com.jpg`
+											uri: `${this.state.events.image}`
 										}}
 										style={{ height: 200, width: null, flex: 1 }}
 									/>
@@ -40,13 +62,9 @@ export default class EventDetail extends React.Component {
 							</CardItem>
 							<CardItem>
 								<Body>
-									<H1>ini raisa</H1>
-									<Text style={{ color: '#ff5252' }}>12 des </Text>
-									<Text style={{ color: '#9e9e9e' }}>deskripsi</Text>
-
-									{/* <Button transparent onPress={this.handlePress}>
-											<Text style={{ color: '#ff5252' }}>Click Here</Text>
-										</Button> */}
+									<H1>{this.state.events.title}</H1>
+									<Text style={{ color: '#ff5252' }}>{this.state.events.starTime}</Text>
+									<Text style={{ color: '#9e9e9e' }}>{this.state.events.description}</Text>
 								</Body>
 							</CardItem>
 						</Card>
